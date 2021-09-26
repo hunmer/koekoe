@@ -24,8 +24,13 @@ $(function() {
         if($('#loop').prop('checked')){
             return g_audio.play();
         }
-        if($('#sleep').val() != 1){
-            randomAudio();
+        var c = $('#sleep').val();
+        if(c > 0){
+            c--;
+            $('#sleep').val(c);
+            if(c > 0){
+                randomAudio();
+            }
         }
     }
 
