@@ -2,6 +2,7 @@ var g_keys;
 var g_audio;
 var g_id;
 var g_type;
+var g_updated = false;
 $(function() {
 		document.addEventListener('touchstart', function () {
 		    if(g_audio.readyState == 4 && g_audio.paused){
@@ -9,8 +10,23 @@ $(function() {
 		    }
 		});
     g_audio = $('audio')[0];
+     g_audio.onplay = () => {
+        if(!g_updated){
+            g_updated = true;
+             $.getJSON('https://neysummer-api.glitch.me/koekoe.php', { id: id }, function(json, textStatus) {
+                if (textStatus == 'success') {
+                    console.log(json);
+                }
+            });
+        }
+    }
     g_audio.onended = () => {
-        randomAudio();
+        if($('#loop').prop('checked')){
+            return g_audio.play();
+        }
+        if($('#sleep').val() != 1){
+            randomAudio();
+        }
     }
 
     g_audio.onerror = () => {
@@ -43,13 +59,10 @@ function initData() {
 
 function randomAudio() {
     g_type = 'upload';
+    g_updated = false;
     var id = g_keys[randNum(1, g_keys.length)];
     loadId(id);
-    $.getJSON('https://neysummer-api.glitch.me/koekoe.php', { id: id }, function(json, textStatus) {
-        if (textStatus == 'success') {
-            console.log(json);
-        }
-    });
+   
 }
 
 function loadId(id) {
